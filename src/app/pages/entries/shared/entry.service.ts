@@ -2,18 +2,22 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Entry } from './entry.model';
 import { Observable, throwError } from 'rxjs';
-import {map, catchError, flatMap} from 'rxjs/operators';
+import { map, catchError, flatMap} from 'rxjs/operators';
+import { CategoryService } from '../../categories/shared/category.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EntryService {
   private apiPath = 'api/entries';
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private categoryService: CategoryService
+    ) { }
 
   getAll(): Observable<Entry[]> {
     return this.http.get(this.apiPath).pipe(
-      catchError(this.handlerError),
+      catchError(this.handleError),
       map(this.jsonDataToEntries)
     );
   }
@@ -21,36 +25,51 @@ export class EntryService {
   gitById(id: number): Observable<Entry> {
     const url = `${this.apiPath}/${id}`;
     return this.http.get(url).pipe(
-      catchError(this.handlerError),
+      catchError(this.handleError),
       map(this.jsonDataToEntry)
     );
   }
 
+  // se fosse map retornaria Observable<Observable<Entry>,
+  // flatMap ja resolve o primeiro observable
   create(entry: Entry): Observable<Entry> {
-    return this.http.post(this.apiPath, entry).pipe(
-      catchError(this.handlerError),
-      map(this.jsonDataToEntry)
+    return this.categoryService.getById (entry.categoryId).pipe(
+      flatMap(category => {
+        entry.category = category;
+
+        // eeto Observable<Entry>
+        return this.http.post(this.apiPath, entry).pipe(
+          catchError(this.handleError),
+          map(this.jsonDataToEntry)
+        );
+      })
     );
   }
 
   update(entry: Entry): Observable<Entry> {
     const url = `${this.apiPath}/${entry.id}`;
-    return this.http.put(url, entry).pipe(
-      catchError(this.handlerError),
-      map(() => entry)
+    return this.categoryService.getById (entry.categoryId).pipe(
+      flatMap(category => {
+        entry.category = category;
+
+        return this.http.put(url, entry).pipe(
+          catchError(this.handleError),
+          map(this.jsonDataToEntry)
+        );
+      })
     );
   }
 
   delete(id: number): Observable<any> {
     const url = `${this.apiPath}/${id}`;
     return this.http.delete(url).pipe(
-      catchError(this.handlerError),
+      catchError(this.handleError),
       map(() => null)
     );
   }
 
   // PRIVATE METHODS
-  private handlerError(error: any): Observable<any> {
+  private handleError(error: any): Observable<any> {
     console.log('ERRO NA REQUISIÇÃO => ', error);
     return throwError(error);
 

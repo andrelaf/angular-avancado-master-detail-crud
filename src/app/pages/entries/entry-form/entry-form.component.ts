@@ -132,10 +132,10 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
 
   private serPageTitle() {
     if (this.currentAction === 'new') {
-      this.pageTitle = 'Cadastro de Nova Categoria';
+      this.pageTitle = 'Cadastro de Novo Lançamento';
     } else {
       const entryName = this.entry.name || '';
-      this.pageTitle = 'Editando Categoria:' + entryName;
+      this.pageTitle = 'Editando Lançamento:' + entryName;
     }
   }
 
