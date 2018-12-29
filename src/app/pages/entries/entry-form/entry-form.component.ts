@@ -65,7 +65,7 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked() {
-    this.serPageTitle();
+    this.setPageTitle();
   }
 
   submitForm() {
@@ -130,7 +130,7 @@ export class EntryFormComponent implements OnInit, AfterContentChecked {
     );
   }
 
-  private serPageTitle() {
+  private setPageTitle() {
     if (this.currentAction === 'new') {
       this.pageTitle = 'Cadastro de Novo Lançamento';
     } else {
