@@ -28,7 +28,8 @@ export class EntryService extends BaseResourceService<Entry> {
   // }
 
   // PRIVATE METHODS
-
+  // O mesmo contexto dentro do flatMap o this vai considerar o context do super
+  // por isso usamos o bind passando o context current
   private setCategoryAndSendToServer(entry: Entry, sendFn: any): Observable<Entry> {
     return this.categoryService.getById(entry.categoryId).pipe(
       flatMap(category => {
