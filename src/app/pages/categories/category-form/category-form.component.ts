@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 
 import { Category } from '../shared/category.model';
 import { CategoryService } from '../shared/category.service';
-import { BaseResourceFormComponent } from '../../../shared/components/base-resource-form/base-resource-form';
+import { BaseResourceFormComponent } from '../../../shared/components/base-resource-form/base-resource-form.component';
 import { Validators } from '@angular/forms';
 
 @Component({
